@@ -135,6 +135,13 @@ exports.replaceExtension = replaceExtension = (path, fromExt, toExt) ->
   bits.join '.'
 
 
+exports.objectSize = objectSize = (obj) ->
+  i = 0
+  for own k of obj
+    i++
+  i
+
+
 exports.re_escape = re_escape = (s) ->
   s.replace /[-\[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
 
@@ -216,4 +223,30 @@ exports.pathsIn = pathsIn = (dir, callback) ->
   _pathsIn dir, paths, () ->
     callback paths
 
+
+# Call <code>.whenDone</code> only after every <code>.newCallback</code>
+exports.AsyncJoin = class AsyncJoin
+  
+  constructor: () ->
+    @numCallbacks = 0
+    @callbacksPending = {}
+  
+  newCallback: () ->
+    
+    @numCallbacks++
+    id = '' + @numCallbacks
+    @callbacksPending[id] = true
+    
+    (() =>
+      if @callbacksPending[id]
+        delete @callbacksPending[id]
+        if @whenDone_callback and objectSize(@callbacksPending) == 0
+          @whenDone_callback()
+          @whenDone_callback = null)
+  
+  whenDone: (callback) ->
+    if objectSize(@callbacksPending) == 0
+      callback()
+    else
+      @whenDone_callback = callback
 

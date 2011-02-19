@@ -1,6 +1,6 @@
 (function() {
-  var ENOTDIR, assert, async, check_exec, check_spawn_exec, extend, firstTimeOnly, http, joinBuffers, joinBuffersWithFixes, pack, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, spawn_exec, test_api_call, toBuffer, unpack, _pathsIn, _ref;
-  var __hasProp = Object.prototype.hasOwnProperty;
+  var AsyncJoin, ENOTDIR, assert, async, check_exec, check_spawn_exec, extend, firstTimeOnly, http, joinBuffers, joinBuffersWithFixes, objectSize, pack, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, spawn_exec, test_api_call, toBuffer, unpack, _pathsIn, _ref;
+  var __hasProp = Object.prototype.hasOwnProperty, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   assert = require('assert');
   querystring = require('querystring');
@@ -168,6 +168,15 @@
     bits.push(toExt);
     return bits.join('.');
   };
+  exports.objectSize = objectSize = function(obj) {
+    var i, k;
+    i = 0;
+    for (k in obj) {
+      if (!__hasProp.call(obj, k)) continue;
+      i++;
+    }
+    return i;
+  };
   exports.re_escape = re_escape = function(s) {
     return s.replace(/[-\[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   };
@@ -263,4 +272,33 @@
       return callback(paths);
     });
   };
+  exports.AsyncJoin = AsyncJoin = (function() {
+    function AsyncJoin() {
+      this.numCallbacks = 0;
+      this.callbacksPending = {};
+    }
+    AsyncJoin.prototype.newCallback = function() {
+      var id;
+      this.numCallbacks++;
+      id = '' + this.numCallbacks;
+      this.callbacksPending[id] = true;
+      return __bind(function() {
+        if (this.callbacksPending[id]) {
+          delete this.callbacksPending[id];
+          if (this.whenDone_callback && objectSize(this.callbacksPending) === 0) {
+            this.whenDone_callback();
+            return this.whenDone_callback = null;
+          }
+        }
+      }, this);
+    };
+    AsyncJoin.prototype.whenDone = function(callback) {
+      if (objectSize(this.callbacksPending) === 0) {
+        return callback();
+      } else {
+        return this.whenDone_callback = callback;
+      }
+    };
+    return AsyncJoin;
+  })();
 }).call(this);
