@@ -1,0 +1,21 @@
+{
+    "name": "tafa-misc-util",
+    "version": "0.0.1",
+    
+    "description": "A hodgepodge of utils in a mostly-flat namespace. They could be refactored into more organized libraries someday, but this library will remain stable.",
+    "url": "https://github.com/tafa/tafa-misc-util",
+    
+    "main": "build/all.js",
+    
+    "dependencies": {
+        "msgpack": ">=1.0.1",
+        "async": ">=0.1.7"
+    },
+    
+    "author": "TAFA",
+    
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/tafa/tafa-misc-util"
+    }
+}
