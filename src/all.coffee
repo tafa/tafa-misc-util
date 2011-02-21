@@ -139,6 +139,11 @@ exports.replaceExtension = replaceExtension = (path, fromExt, toExt) ->
   bits.join '.'
 
 
+exports.objectKeys = objectKeys = (obj) ->
+  for own k of obj
+    k
+
+
 exports.objectSize = objectSize = (obj) ->
   i = 0
   for own k of obj
