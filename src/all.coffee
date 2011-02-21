@@ -2,13 +2,14 @@
 http = require 'http'
 assert = require 'assert'
 querystring = require 'querystring'
+{spawn, exec} = require 'child_process'
 
 async = require 'async'
 {pack, unpack} = require 'msgpack'
 
 
-exports.middleware = require './middleware'
-
+for own k, v of require('./middleware')
+  exports[k] = v
 
 
 exports.readText = readText = (s, callback) ->
@@ -96,9 +97,12 @@ exports.randomInteger = randomInteger = (a, b) ->
   Math.floor(random() * (b - a + 1)) + a
 
 
-exports.randomToken = randomToken = (n = 8, alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz') ->
+exports.ALPHABET58 = ALPHABET58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+
+exports.randomToken = randomToken = (n = 8, alphabet = ALPHABET58) ->
+  lte = alphabet.length - 1
   (for i in [0...n]
-    alphabet.substr randomInteger(0, 57), 1
+    alphabet.charAt randomInteger(0, lte)
   ).join('')
 
 

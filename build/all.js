@@ -1,12 +1,18 @@
 (function() {
-  var AsyncJoin, ENOTDIR, assert, async, check_exec, check_spawn_exec, extend, firstTimeOnly, http, joinBuffers, joinBuffersWithFixes, objectSize, pack, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, spawn_exec, test_api_call, toBuffer, unpack, _pathsIn, _ref;
+  var ALPHABET58, AsyncJoin, ENOTDIR, assert, async, check_exec, check_spawn_exec, exec, extend, firstTimeOnly, http, joinBuffers, joinBuffersWithFixes, k, objectSize, pack, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, spawn, spawn_exec, test_api_call, toBuffer, unpack, v, _pathsIn, _ref, _ref2, _ref3;
   var __hasProp = Object.prototype.hasOwnProperty, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   assert = require('assert');
   querystring = require('querystring');
+  _ref = require('child_process'), spawn = _ref.spawn, exec = _ref.exec;
   async = require('async');
-  _ref = require('msgpack'), pack = _ref.pack, unpack = _ref.unpack;
-  exports.middleware = require('./middleware');
+  _ref2 = require('msgpack'), pack = _ref2.pack, unpack = _ref2.unpack;
+  _ref3 = require('./middleware');
+  for (k in _ref3) {
+    if (!__hasProp.call(_ref3, k)) continue;
+    v = _ref3[k];
+    exports[k] = v;
+  }
   exports.readText = readText = function(s, callback) {
     var arr;
     arr = [];
@@ -111,19 +117,21 @@
   exports.randomInteger = randomInteger = function(a, b) {
     return Math.floor(random() * (b - a + 1)) + a;
   };
+  exports.ALPHABET58 = ALPHABET58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   exports.randomToken = randomToken = function(n, alphabet) {
-    var i;
+    var i, lte;
     if (n == null) {
       n = 8;
     }
     if (alphabet == null) {
-      alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+      alphabet = ALPHABET58;
     }
+    lte = alphabet.length - 1;
     return ((function() {
       var _results;
       _results = [];
       for (i = 0; (0 <= n ? i < n : i > n); (0 <= n ? i += 1 : i -= 1)) {
-        _results.push(alphabet.substr(randomInteger(0, 57), 1));
+        _results.push(alphabet.charAt(randomInteger(0, lte)));
       }
       return _results;
     })()).join('');
