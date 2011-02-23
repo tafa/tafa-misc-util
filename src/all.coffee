@@ -259,3 +259,16 @@ exports.AsyncJoin = class AsyncJoin
     else
       @whenDone_callback = callback
 
+
+repoContainingPath = (path, callback, i = 0) ->
+  bits = path.split '/'
+  repo = bits[0...(bits.length - i)].join('/')
+  fs.stat "#{repo}/.git", (e, stats) ->
+    if not e and stats.isDirectory()
+      callback repo
+    else
+      if (i + 1) < bits.length
+        currentRepo path, callback, (i + 1)
+      else
+        callback null
+

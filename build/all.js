@@ -1,5 +1,5 @@
 (function() {
-  var ALPHABET58, AsyncJoin, ENOTDIR, assert, async, check_exec, check_spawn_exec, exec, extend, firstTimeOnly, http, joinBuffers, joinBuffersWithFixes, k, objectKeys, objectSize, pack, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, spawn, spawn_exec, test_api_call, toBuffer, unpack, v, _pathsIn, _ref, _ref2, _ref3;
+  var ALPHABET58, AsyncJoin, ENOTDIR, assert, async, check_exec, check_spawn_exec, exec, extend, firstTimeOnly, http, joinBuffers, joinBuffersWithFixes, k, objectKeys, objectSize, pack, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, repoContainingPath, spawn, spawn_exec, test_api_call, toBuffer, unpack, v, _pathsIn, _ref, _ref2, _ref3;
   var __hasProp = Object.prototype.hasOwnProperty, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   assert = require('assert');
@@ -318,4 +318,23 @@
     };
     return AsyncJoin;
   })();
+  repoContainingPath = function(path, callback, i) {
+    var bits, repo;
+    if (i == null) {
+      i = 0;
+    }
+    bits = path.split('/');
+    repo = bits.slice(0, bits.length - i).join('/');
+    return fs.stat("" + repo + "/.git", function(e, stats) {
+      if (!e && stats.isDirectory()) {
+        return callback(repo);
+      } else {
+        if ((i + 1) < bits.length) {
+          return currentRepo(path, callback, i + 1);
+        } else {
+          return callback(null);
+        }
+      }
+    });
+  };
 }).call(this);
