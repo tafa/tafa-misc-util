@@ -1,4 +1,5 @@
 
+fs = require 'fs'
 http = require 'http'
 assert = require 'assert'
 querystring = require 'querystring'
@@ -271,4 +272,38 @@ repoContainingPath = (path, callback, i = 0) ->
         currentRepo path, callback, (i + 1)
       else
         callback null
+
+
+exports.asciiPrefixOfBuffer = asciiPrefixOfBuffer = (data) ->
+  for i in [0...data.length]
+    if data[i] > 127
+      break
+  data.slice(0, i).toString('utf-8')
+
+
+exports.parsePNM = parsePNM = (data) ->
+  
+  text = asciiPrefixOfBuffer data
+  m0 = text.match /^P([123456])/
+  throw new Error "Invalid PNM header" if not m0
+  P = parseInt m0[1], 10
+  
+  if P == 1 or P == 4
+    m = text.match /^P([14])[ \r\n\t]+([0-9]+)[ \r\n\t]+([0-9]+)[ \r\n\t]+/
+    maxValue = 1
+  else
+    m = text.match /^P([2356])[ \r\n\t]+([0-9]+)[ \r\n\t]+([0-9]+)[ \r\n\t]+([0-9]+)[ \r\n\t]+/
+    maxValue = parseInt m[4], 10
+  
+  throw new Error "Invalid PNM header" if not m
+  headerLength = m[0].length
+  
+  {
+    P: P
+    maxValue: maxValue
+    headerLength: headerLength
+    data: data.slice(headerLength)
+    w: parseInt(m[2], 10)
+    h: parseInt(m[3], 10)
+  }
 

@@ -1,6 +1,7 @@
 (function() {
-  var ALPHABET58, AsyncJoin, ENOTDIR, assert, async, check_exec, check_spawn_exec, exec, extend, firstTimeOnly, http, joinBuffers, joinBuffersWithFixes, k, objectKeys, objectSize, pack, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, repoContainingPath, spawn, spawn_exec, test_api_call, toBuffer, unpack, v, _pathsIn, _ref, _ref2, _ref3;
+  var ALPHABET58, AsyncJoin, ENOTDIR, asciiPrefixOfBuffer, assert, async, check_exec, check_spawn_exec, exec, extend, firstTimeOnly, fs, http, joinBuffers, joinBuffersWithFixes, k, objectKeys, objectSize, pack, parsePNM, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, repoContainingPath, spawn, spawn_exec, test_api_call, toBuffer, unpack, v, _pathsIn, _ref, _ref2, _ref3;
   var __hasProp = Object.prototype.hasOwnProperty, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  fs = require('fs');
   http = require('http');
   assert = require('assert');
   querystring = require('querystring');
@@ -336,5 +337,42 @@
         }
       }
     });
+  };
+  exports.asciiPrefixOfBuffer = asciiPrefixOfBuffer = function(data) {
+    var i, _ref;
+    for (i = 0, _ref = data.length; (0 <= _ref ? i < _ref : i > _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+      if (data[i] > 127) {
+        break;
+      }
+    }
+    return data.slice(0, i).toString('utf-8');
+  };
+  exports.parsePNM = parsePNM = function(data) {
+    var P, headerLength, m, m0, maxValue, text;
+    text = asciiPrefixOfBuffer(data);
+    m0 = text.match(/^P([123456])/);
+    if (!m0) {
+      throw new Error("Invalid PNM header");
+    }
+    P = parseInt(m0[1], 10);
+    if (P === 1 || P === 4) {
+      m = text.match(/^P([14])[ \r\n\t]+([0-9]+)[ \r\n\t]+([0-9]+)[ \r\n\t]+/);
+      maxValue = 1;
+    } else {
+      m = text.match(/^P([2356])[ \r\n\t]+([0-9]+)[ \r\n\t]+([0-9]+)[ \r\n\t]+([0-9]+)[ \r\n\t]+/);
+      maxValue = parseInt(m[4], 10);
+    }
+    if (!m) {
+      throw new Error("Invalid PNM header");
+    }
+    headerLength = m[0].length;
+    return {
+      P: P,
+      maxValue: maxValue,
+      headerLength: headerLength,
+      data: data.slice(headerLength),
+      w: parseInt(m[2], 10),
+      h: parseInt(m[3], 10)
+    };
   };
 }).call(this);
