@@ -1,5 +1,5 @@
 (function() {
-  var ALPHABET58, AsyncJoin, ENOTDIR, asciiPrefixOfBuffer, assert, async, check_exec, check_spawn_exec, exec, extend, firstTimeOnly, fs, http, joinBuffers, joinBuffersWithFixes, k, objectKeys, objectSize, pack, parsePNM, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, repoContainingPath, spawn, spawn_exec, test_api_call, toBuffer, unpack, v, _pathsIn, _ref, _ref2, _ref3;
+  var ALPHABET58, AsyncJoin, ENOTDIR, asciiPrefixOfBuffer, assert, async, check_exec, check_spawn_exec, exec, extend, firstTimeOnly, fs, http, joinBuffers, joinBuffersWithFixes, k, max, min, objectKeys, objectSize, pack, parsePNM, pathsIn, querystring, random, randomInteger, randomToken, re_escape, readData, readText, replaceExtension, repoContainingPath, spawn, spawn_exec, test_api_call, toBuffer, unpack, v, _pathsIn, _ref, _ref2, _ref3;
   var __hasProp = Object.prototype.hasOwnProperty, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   fs = require('fs');
   http = require('http');
@@ -14,6 +14,20 @@
     v = _ref3[k];
     exports[k] = v;
   }
+  exports.min = min = function(x, y) {
+    if (x < y) {
+      return x;
+    } else {
+      return y;
+    }
+  };
+  exports.max = max = function(x, y) {
+    if (x > y) {
+      return x;
+    } else {
+      return y;
+    }
+  };
   exports.readText = readText = function(s, callback) {
     var arr;
     arr = [];

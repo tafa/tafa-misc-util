@@ -13,6 +13,11 @@ for own k, v of require('./middleware')
   exports[k] = v
 
 
+exports.min = min = (x, y) -> if x < y then x else y
+
+exports.max = max = (x, y) -> if x > y then x else y
+
+
 exports.readText = readText = (s, callback) ->
   arr = []
   s.on 'data', (data) -> arr.push data.toString 'utf-8'
