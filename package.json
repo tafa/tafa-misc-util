@@ -12,7 +12,7 @@
         "async": ">=0.1.7"
     },
     
-    "author": "TAFA",
+    "author": "TAFA <tafa@andrewschaaf.com>",
     
     "repository": {
         "type": "git",
