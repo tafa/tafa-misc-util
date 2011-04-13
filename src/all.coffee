@@ -6,7 +6,7 @@ querystring = require 'querystring'
 {spawn, exec} = require 'child_process'
 
 async = require 'async'
-{pack, unpack} = require 'msgpack'
+{pack, unpack} = require 'msgpack-v0.3'
 
 
 
