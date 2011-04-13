@@ -8,6 +8,7 @@
   _ref = require('child_process'), spawn = _ref.spawn, exec = _ref.exec;
   async = require('async');
   _ref2 = require('msgpack'), pack = _ref2.pack, unpack = _ref2.unpack;
+  exports.mac = require('./mac');
   _ref3 = require('./middleware');
   for (k in _ref3) {
     if (!__hasProp.call(_ref3, k)) continue;

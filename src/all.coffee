@@ -9,6 +9,11 @@ async = require 'async'
 {pack, unpack} = require 'msgpack'
 
 
+
+exports.mac = require './mac'
+
+
+
 for own k, v of require('./middleware')
   exports[k] = v
 
