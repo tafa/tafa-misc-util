@@ -5,7 +5,7 @@
     "description": "A hodgepodge of utils in a mostly-flat namespace. They could be refactored into more organized libraries someday, but this library will remain stable.",
     "url": "https://github.com/tafa/tafa-misc-util",
     
-    "main": "build/all.js",
+    "main": "lib/all.js",
     
     "dependencies": {
         "msgpack-v0.3": ">=0.1.3",
