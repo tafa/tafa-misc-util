@@ -6,8 +6,6 @@ querystring = require 'querystring'
 {spawn, exec} = require 'child_process'
 
 async = require 'async'
-{pack, unpack} = require 'msgpack-v0.3'
-
 
 
 exports.mac = require './mac'
@@ -33,11 +31,6 @@ exports.readData = readData = (s, callback) ->
   arr = []
   s.on 'data', (data) -> arr.push data
   s.on 'end', () -> callback joinBuffers arr
-
-
-# <code>msgpack.pack</code> isn't an ordinary <code>Buffer</code>.
-exports.msgpackToBuffer = (x) ->
-  new Buffer(pack(x).toString('base64'), 'base64')
 
 
 exports.joinBuffers = joinBuffers = (arr) ->
