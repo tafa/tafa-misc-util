@@ -177,10 +177,39 @@ exports.lstrip = (s, chars = "\t\n\v\f\r ") ->
   if m then s.substr(m[0].length) else s
 
 
+exports.parseBash = parseBash = (str) ->
+  if str.match /^[^|'"]+$/
+    bits = str.split /[ \t]+/
+    return [
+      {
+        program: bits[0]
+        args: bits[1...]
+      }
+    ]
+  else
+    throw new Error """Bash strings containing any of |'" are not yet supported"""
+
+
 exports.noisySpawn = noisySpawn = (program, args) ->
   p = spawn program, args
   p.stdout.on 'data', (data) -> process.stdout.write data
   p.stderr.on 'data', (data) -> process.stderr.write data
+  p
+
+
+exports.noisyExec = noisyExec = (str, callback) ->
+  {program, args} = parseBash(str)[0]
+  outBufs = []
+  errBufs = []
+  p = spawn program, args
+  p.stdout.on 'data', (data) ->
+    process.stdout.write data
+    outBufs.push data
+  p.stderr.on 'data', (data) ->
+    process.stderr.write data
+    errBufs.push data
+  p.on 'exit', (code, signal) ->
+    callback (code != 0), joinBuffers(outBufs), joinBuffers(errBufs)
   p
 
 
