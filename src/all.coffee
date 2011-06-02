@@ -177,6 +177,13 @@ exports.lstrip = (s, chars = "\t\n\v\f\r ") ->
   if m then s.substr(m[0].length) else s
 
 
+exports.noisySpawn = noisySpawn = (program, args) ->
+  p = spawn program, args
+  p.stdout.on 'data', (data) -> process.stdout.write data
+  p.stderr.on 'data', (data) -> process.stderr.write data
+  p
+
+
 exports.check_exec = check_exec = (cmd, callback) ->
   exec cmd, (e, stdout, stderr) ->
     throw e if e
