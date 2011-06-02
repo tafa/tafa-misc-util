@@ -29,7 +29,7 @@ exports.readText = readText = (s, callback) ->
   s.on 'end', () -> callback arr.join ''
 
 
-exports.readText = readData = (s, callback) ->
+exports.readData = readData = (s, callback) ->
   arr = []
   s.on 'data', (data) -> arr.push data
   s.on 'end', () -> callback joinBuffers arr
