@@ -203,6 +203,7 @@ exports.spawn_exec = spawn_exec = (name, args, callback) ->
         (if code == 0 then null else {code: code}),
         (if callback.length > 0 then joinBuffers(stdout_bufs) else null),
         (if callback.length > 0 then joinBuffers(stderr_bufs) else null))
+  p
 
 
 exports.check_spawn_exec = check_spawn_exec = (name, args, callback) ->
