@@ -2,6 +2,7 @@
 fs = require 'fs'
 http = require 'http'
 assert = require 'assert'
+crypto = require 'crypto'
 querystring = require 'querystring'
 {spawn, exec} = require 'child_process'
 
@@ -17,8 +18,10 @@ for own k, v of require('./middleware')
 
 
 exports.min = min = (x, y) -> if x < y then x else y
-
 exports.max = max = (x, y) -> if x > y then x else y
+
+exports.intervalSet = intervalSet = (ms, f) -> setInterval f, ms
+exports.timeoutSet  = timeoutSet  = (ms, f) -> setTimeout f, ms
 
 
 exports.readText = readText = (s, callback) ->
@@ -81,6 +84,61 @@ exports.toBuffer = toBuffer = (x) ->
     x
   else
     new Buffer x
+
+
+exports.startswith = startswith = (s, s2) -> (s.length >= s2.length) and (s.substr(0, s2.length) == s2)
+exports.endswith = endswith = (s, s2) -> (s.length >= s2.length) and (s.substr(s.length - s2.length) == s2)
+
+exports.rstrip = (s, chars = "\t\n\v\f\r ") ->
+  m = s.match new RegExp "[#{re_escape chars}]+$"
+  if m then s.substr(0, s.length - m[0].length) else s
+
+
+exports.lstrip = (s, chars = "\t\n\v\f\r ") ->
+  m = s.match new RegExp "^[#{re_escape chars}]+"
+  if m then s.substr(m[0].length) else s
+
+
+exports.lremove = (s, s2) ->
+  assert.ok startswith s, s2
+  s.slice s2.length
+
+
+exports.rjust = rjust = (s, width, fillchar = ' ') ->
+  n = width - s.length
+  if n <= 0
+    s
+  else
+    arr = []
+    for i in [0...n]
+      arr.push fillchar
+    arr.push s
+    arr.join ''
+
+
+exports.sha256 = sha256 = (data) ->
+  new Buffer crypto.createHash('sha256').update(data).digest('base64'), 'base64'
+
+
+exports.sha256_first4 = sha256_first4 = (data) ->
+  sha256(data).slice 0, 4
+
+
+exports.keysOf = keysOf = (d) ->
+  for own k of d
+    k
+
+
+exports.valuesOf = valuesOf = (d) ->
+  for own k, v of d
+    v
+
+
+exports.invertedDict = invertedDict = (d) ->
+  d2 = {}
+  for own k, v of d
+    d2[v] = k
+  d2
 
 
 exports.firstTimeOnly = firstTimeOnly = (callback) ->
@@ -274,6 +332,22 @@ exports.pathsIn = pathsIn = (dir, callback) ->
     callback paths
 
 
+exports.uint32le = uint32le = (n) ->
+  new Buffer [
+    (n) % 256,
+    (n >> 8) % 256,
+    (n >> 16) % 256,
+    (n >> 24) % 256
+  ]
+
+
+exports.uint16le = uint16le = (n) ->
+  new Buffer [
+    (n) % 256,
+    (n >> 8) % 256
+  ]
+
+
 # Call <code>.whenDone</code> only after every <code>.newCallback</code>
 exports.AsyncJoin = class AsyncJoin
   
@@ -346,4 +420,62 @@ exports.parsePNM = parsePNM = (data) ->
     w: parseInt(m[2], 10)
     h: parseInt(m[3], 10)
   }
+
+
+exports.varintEncodeToOctets = varintEncodeToOctets = (octets, x) ->
+  if x < 128
+    octets.push x
+  else
+    while true
+      octet = (x % 128)
+      octet |= 128 if x >= 128
+      octets.push octet
+      if x < 128
+        return
+      x = Math.floor(x / 128)
+
+
+exports.varintsEncode = varintsEncode = (ints) ->
+  octets = []
+  for x in ints
+    varintEncodeToOctets octets, x
+  new Buffer octets
+
+
+NIBBLES = {
+  '0': '0'
+  '1': '1'
+  '2': '2'
+  '3': '3'
+  '4': '4'
+  '5': '5'
+  '6': '6'
+  '7': '7'
+  '8': '8'
+  '9': '9'
+  '10': 'a'
+  '11': 'b'
+  '12': 'c'
+  '13': 'd'
+  '14': 'e'
+  '15': 'f'
+}
+
+
+exports.hex_encode = hex_encode = (buf) ->
+  arr = []
+  for i in [0...buf.length]
+    n = buf[i]
+    arr.push(
+          NIBBLES['' + (n >> 4)],
+          NIBBLES['' + (n % 16)])
+  arr.join ''
+
+
+exports.hex_decode = hex_decode = (str) ->
+  octets = []
+  for i in [0...str.length / 2]
+    sub = str.substr(2*i, 2)
+    octets.push parseInt(sub, 16)
+  new Buffer octets
 
