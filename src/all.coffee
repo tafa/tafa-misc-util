@@ -12,6 +12,8 @@ async = require 'async'
 exports.mac = require './mac'
 
 
+exports.I = I = (->)
+
 
 for own k, v of require('./middleware')
   exports[k] = v
@@ -24,13 +26,13 @@ exports.intervalSet = intervalSet = (ms, f) -> setInterval f, ms
 exports.timeoutSet  = timeoutSet  = (ms, f) -> setTimeout f, ms
 
 
-exports.readText = readText = (s, callback) ->
+exports.readText = readText = (s, callback = I) ->
   arr = []
   s.on 'data', (data) -> arr.push data.toString 'utf-8'
   s.on 'end', () -> callback arr.join ''
 
 
-exports.readData = readData = (s, callback) ->
+exports.readData = readData = (s, callback = I) ->
   arr = []
   s.on 'data', (data) -> arr.push data
   s.on 'end', () -> callback joinBuffers arr
@@ -169,7 +171,7 @@ exports.randomToken = randomToken = (n = 8, alphabet = ALPHABET58) ->
 
 
 
-exports.test_api_call = test_api_call = (fname, x, callback) ->
+exports.test_api_call = test_api_call = (fname, x, callback = I) ->
   j = JSON.stringify x
   qs = querystring.stringify {j:j}
   opt = {
@@ -255,7 +257,7 @@ exports.noisySpawn = noisySpawn = (program, args) ->
   p
 
 
-exports.noisyExec = noisyExec = (str, callback) ->
+exports.noisyExec = noisyExec = (str, callback = I) ->
   {program, args} = parseBash(str)[0]
   outBufs = []
   errBufs = []
@@ -271,13 +273,13 @@ exports.noisyExec = noisyExec = (str, callback) ->
   p
 
 
-exports.check_exec = check_exec = (cmd, callback) ->
+exports.check_exec = check_exec = (cmd, callback = I) ->
   exec cmd, (e, stdout, stderr) ->
     throw e if e
     callback stdout, stderr
 
 
-exports.spawn_exec = spawn_exec = (name, args, callback) ->
+exports.spawn_exec = spawn_exec = (name, args, callback = I) ->
   
   stdout_bufs = []
   stderr_bufs = []
@@ -293,7 +295,7 @@ exports.spawn_exec = spawn_exec = (name, args, callback) ->
   p
 
 
-exports.check_spawn_exec = check_spawn_exec = (name, args, callback) ->
+exports.check_spawn_exec = check_spawn_exec = (name, args, callback = I) ->
   spawn_exec name, args, (e, stdout, stderr) ->
     throw e if e
     callback stdout, stderr
@@ -304,7 +306,7 @@ exports.check_spawn_exec = check_spawn_exec = (name, args, callback) ->
 ENOTDIR = 20
 
 
-_pathsIn = (path, paths, callback) ->
+_pathsIn = (path, paths, callback = I) ->
   fs.readdir path, (err, files) ->
     
     # Case: file
