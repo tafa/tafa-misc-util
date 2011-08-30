@@ -38,6 +38,14 @@ exports.readData = readData = (s, callback = I) ->
   s.on 'end', () -> callback joinBuffers arr
 
 
+exports.reversed = reversed = (arr) ->
+  arr2 = []
+  if arr.length > 0
+    for i in [(arr.length - 1)..0]
+      arr2.push arr[i]
+  arr2
+
+
 exports.joinBuffers = joinBuffers = (arr) ->
   size = 0
   for x in arr
