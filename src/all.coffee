@@ -350,6 +350,22 @@ exports.uint16le = uint16le = (n) ->
   ]
 
 
+exports.uint32le = uint32be = (n) ->
+  new Buffer [
+    (n >> 24) % 256,
+    (n >> 16) % 256,
+    (n >> 8) % 256,
+    (n) % 256
+  ]
+
+
+exports.uint16le = uint16be = (n) ->
+  new Buffer [
+    (n >> 8) % 256,
+    (n) % 256
+  ]
+
+
 # Call <code>.whenDone</code> only after every <code>.newCallback</code>
 exports.AsyncJoin = class AsyncJoin
   
