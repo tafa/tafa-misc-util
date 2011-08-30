@@ -2,6 +2,6 @@
 {noisyExec} = require './src/all'
 
 
-task 'watch', () ->
+task 'dev', () ->
   noisyExec "coffee -cwo lib/ src/"
 
