@@ -245,6 +245,14 @@ exports.lstrip = (s, chars = "\t\n\v\f\r ") ->
   if m then s.substr(m[0].length) else s
 
 
+exports.xmlEscape = xmlEscape = (s) ->
+  (s.replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;'))
+
+
 exports.parseBash = parseBash = (str) ->
   if str.match /^[^|'"]+$/
     bits = str.split /[ \t]+/
