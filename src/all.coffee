@@ -513,3 +513,14 @@ exports.hex_decode = hex_decode = (str) ->
     octets.push parseInt(sub, 16)
   new Buffer octets
 
+
+
+exports.b64encode = b64encode = (x) ->
+  if x not instanceof Buffer
+    x = new Buffer x, 'utf-8'
+  x.toString 'base64'
+
+
+exports.b64decode = b64decode = (x) ->
+  new Buffer x, 'base64'
+
