@@ -317,16 +317,11 @@ exports.check_spawn_exec = check_spawn_exec = (name, args, callback = I) ->
     callback stdout, stderr
 
 
-
-
-ENOTDIR = 20
-
-
 _pathsIn = (path, paths, callback = I) ->
   fs.readdir path, (err, files) ->
     
     # Case: file
-    if err and err.errno == ENOTDIR
+    if err and err.code == 'ENOTDIR'
       paths.push path
       return callback()
     
